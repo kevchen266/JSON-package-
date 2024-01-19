@@ -63,9 +63,9 @@ public class Main {
             writeJsonToFile(prefixedJson, "Task4_prefixed_output.json");
 
             // Task 5: Replace a sub-object
-            if (args.length > 4) {
+            if (args.length > 3) {
                 String replacePath = args[2];
-                String jsonString = args[4];
+                String jsonString = args[3];
                 System.out.println("JSON String: " + jsonString); // Debug print
 
                 try {
