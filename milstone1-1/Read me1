@@ -1,7 +1,9 @@
-Run and test the program by inputing the arguments in main function. I provide my arguments input below as example to test and run the program.
+Run and test the program by inputing four arguments in main function. 
+I provide my inputs arguments below as example to test and run the program, .
 
-C:\Users\kev19\OneDrive\Documents\small.xml  ( The path of you xml file. )
-/catalog/book/1  (The key path of your sub-object that you wnat to extract.)
-/catalog/book/2  ( The key path that you want to check whether it's exist.)
-"{\"catalog\": {\"book\": [{\"id\": \"bk101\", \"author\": \"Kevin Chen\", \"title\": \"Task 5\", \"genre\": \"88888\", \"price\": 88888, \"publish_date\": \"2024-1-19\", \"description\": \"task5 testing\"}]}}"
-( A JSOn string sub-object on a certain key path with another JSON object that you want to replace ) 
+1. ( The path of you xml file. ) :   C:\Users\kev19\OneDrive\Documents\small.xml  
+2. (The key path of your sub-object that you wnat to extract.) : /catalog/book/1  
+3. ( The key path that you want to check whether it's exist.) :  /catalog/book/2  
+4. ( A JSON string sub-object on a certain key path with another JSON object that you want to replace )  :
+    "{\"catalog\": {\"book\": [{\"id\": \"bk101\", \"author\": \"Kevin Chen\", \"title\": \"Task 5\", \"genre\": \"88888\", \"price\": 88888, \"publish_date\": \"2024-1-19\", \"description\": \"task5 testing\"}]}}"
+
