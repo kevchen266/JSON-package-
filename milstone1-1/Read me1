@@ -1,0 +1,7 @@
+Run and test the program by inputing the arguments in main function. I provide my arguments input below as example to test and run the program.
+
+C:\Users\kev19\OneDrive\Documents\small.xml  ( The path of you xml file. )
+/catalog/book/1  (The key path of your sub-object that you wnat to extract.)
+/catalog/book/2  ( The key path that you want to check whether it's exist.)
+"{\"catalog\": {\"book\": [{\"id\": \"bk101\", \"author\": \"Kevin Chen\", \"title\": \"Task 5\", \"genre\": \"88888\", \"price\": 88888, \"publish_date\": \"2024-1-19\", \"description\": \"task5 testing\"}]}}"
+( A JSOn string sub-object on a certain key path with another JSON object that you want to replace ) 
