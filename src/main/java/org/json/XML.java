@@ -8,6 +8,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Iterator;
 
 import static org.json.NumberConversionUtil.potentialNumber;
@@ -654,6 +655,78 @@ public class XML {
     public static JSONObject toJSONObject(String string, XMLParserConfiguration config) throws JSONException {
         return toJSONObject(new StringReader(string), config);
     }
+
+
+
+
+    /**
+     * Authored by Kaichun Chen
+     *
+     * Read an XML file into a JSON object,
+     * return a sub-object on a certain key path you specify
+     *
+     * All values are converted as strings, for 1, 01, 29.0 will not be coerced to
+     * numbers but will instead be the exact value as seen in the XML document.
+     *
+     * @param reader The XML source reader.
+     * @param path Target JSON sub object to return.
+     * @return A JSONObject containing the structured data from the XML string.
+     * @throws  JSONException Thrown if there is an errors while parsing the string
+     * @catch EarlyTermination Thrown if the correct path is found
+     */
+    public static JSONObject toJSONObject(Reader reader, JSONPointer path) throws JSONException{
+        //Tokenize the XML data, andConvert the tokenized XML to a JSONObject.
+        XMLTokener tk = new XMLTokener(reader);
+        JSONObject JO = new JSONObject(tk);
+        Object result = JO.query(path);
+
+        if(result instanceof JSONObject){
+            return (JSONObject) result;
+        }else{
+            throw new JSONException("path incorrect.");
+        }
+
+    }
+
+
+    /**
+     * Authored by Kaichun Chen
+     *
+     * Read an XML file into a JSON object,replace a sub-object from another JSON object with
+     * certain key path.
+     *
+     * @param reader The XML source reader.
+     * @param path Target JSON object will be replaced.
+     * @param replacement sub-object to replace
+     * @return A JSONObject containing the structured data from the XML string.
+     * @throws  JSONException Thrown if there is an errors while parsing the string
+     */
+    public static JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObject replacement)throws JSONException{
+        XMLTokener tk = new XMLTokener(reader);
+        JSONObject JO = new JSONObject(tk);
+        Object result = JO.query(path);
+
+        if (result instanceof JSONObject) {
+            // Replace the specified sub-object with the replacement JSONObject
+            String[] pathTokens = path.toString().substring(1).split("/");
+            JSONObject parent = JO;
+            for (int i = 0; i < pathTokens.length - 1; i++) {
+                parent = parent.getJSONObject(pathTokens[i]);
+            }
+
+            // Replace the last part of the path with the replacement JSONObject
+            String key = pathTokens[pathTokens.length - 1];
+            parent.put(key, replacement);
+            return JO;
+        } else {
+            throw new JSONException("The specified path does not lead to a valid JSON object.");
+        }
+
+
+    }
+
+
+
 
     /**
      * Convert a JSONObject into a well-formed, element-normal XML string.
