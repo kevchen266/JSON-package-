@@ -26,7 +26,7 @@ public class JSONTokener {
     /** previous character read from the input. */
     private char previous;
     /** Reader for the input. */
-    private final Reader reader;
+    final Reader reader;
     /** flag to indicate that a previous character was requested. */
     private boolean usePrevious;
     /** the number of characters read in the previous line. */

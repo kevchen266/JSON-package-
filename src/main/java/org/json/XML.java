@@ -4,6 +4,7 @@ package org.json;
 Public Domain.
 */
 
+import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.math.BigDecimal;
@@ -674,20 +675,13 @@ public class XML {
      * @throws  JSONException Thrown if there is an errors while parsing the string
      * @catch EarlyTermination Thrown if the correct path is found
      */
-    public static JSONObject toJSONObject(Reader reader, JSONPointer path) throws JSONException{
-        //Tokenize the XML data, andConvert the tokenized XML to a JSONObject.
-        XMLTokener tk = new XMLTokener(reader);
-        JSONObject JO = new JSONObject(tk);
-        Object result = JO.query(path);
-
-        if(result instanceof JSONObject){
-            return (JSONObject) result;
-        }else{
-            throw new JSONException("path incorrect.");
-        }
-
+    public static JSONObject toJSONObject(Reader reader, JSONPointer path) throws JSONException, IOException {
+        XMLTokener x = new XMLTokener(reader);
+        JSONObject context = new JSONObject();
+        parse(x, context, null, new XMLParserConfiguration(), 0); // Parse the entire XML.
+        // After parsing, use the JSONPointer to retrieve the specific part of the JSON structure.
+        return (JSONObject) path.queryFrom(context);
     }
-
 
     /**
      * Authored by Kaichun Chen
@@ -701,41 +695,43 @@ public class XML {
      * @return A JSONObject containing the structured data from the XML string.
      * @throws  JSONException Thrown if there is an errors while parsing the string
      */
-    public static JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObject replacement)throws JSONException{
-        XMLTokener tk = new XMLTokener(reader);
-        JSONObject JO = new JSONObject(tk);
-        Object result = JO.query(path);
-
-        if (result instanceof JSONObject) {
-            // Replace the specified sub-object with the replacement JSONObject
-            String[] pathTokens = path.toString().substring(1).split("/");
-            JSONObject parent = JO;
-            for (int i = 0; i < pathTokens.length - 1; i++) {
-                parent = parent.getJSONObject(pathTokens[i]);
-            }
-
-            // Replace the last part of the path with the replacement JSONObject
-            String key = pathTokens[pathTokens.length - 1];
-            parent.put(key, replacement);
-            return JO;
+    public static JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObject replacement) throws JSONException, IOException {
+        XMLTokener x = new XMLTokener(reader);
+        JSONObject context = new JSONObject();
+        parse(x, context, null, new XMLParserConfiguration(), 0); // Parse the entire XML.
+        // Implement replacement logic after parsing based on the provided path.
+        // This simplistic approach assumes the path leads directly to a JSONObject.
+        // For real-world applications, this logic might need to be more robust, handling arrays and nested objects.
+        String[] segments = path.toString().substring(1).split("/");
+        replace(context, segments, 0, replacement);
+        return context;
+    }
+    // Helper method for replacement within the JSONObject.
+    private static void replace(JSONObject context, String[] segments, int index, JSONObject replacement) throws JSONException {
+        if (index == segments.length - 1) {
+            context.put(segments[index], replacement);
         } else {
-            throw new JSONException("The specified path does not lead to a valid JSON object.");
+            if (context.has(segments[index])) {
+                replace(context.getJSONObject(segments[index]), segments, index + 1, replacement);
+            } else {
+                // Path not found; could throw an error or log a warning.
+                System.out.println("Path not found: " + String.join("/", segments));
+            }
         }
-
-
     }
 
 
 
 
-    /**
-     * Convert a JSONObject into a well-formed, element-normal XML string.
-     *
-     * @param object
-     *            A JSONObject.
-     * @return A string.
-     * @throws JSONException Thrown if there is an error parsing the string
-     */
+
+        /**
+         * Convert a JSONObject into a well-formed, element-normal XML string.
+         *
+         * @param object
+         *            A JSONObject.
+         * @return A string.
+         * @throws JSONException Thrown if there is an error parsing the string
+         */
     public static String toString(Object object) throws JSONException {
         return toString(object, null, XMLParserConfiguration.ORIGINAL);
     }
