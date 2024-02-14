@@ -9,28 +9,23 @@ public class M3Test {
             String apply(String a);
         }
         // implementation of the functional interface using lambda
-        MyFunction addPrefix = (a) -> "swe262_" + a;
+        MyFunction addPrefix = (a) -> "foo" + a;
 
-        String xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
-                "<contact>\n"+
-                "  <nick>Crista </nick>\n"+
-                "  <name>Crista Lopes</name>\n" +
-                "  <address>\n" +
-                "    <street>Ave of Nowhere</street>\n" +
-                "    <zipcode>92614</zipcode>\n" +
-                "  </address>\n" +
-                "</contact>";
+        String xmlString = "<?xml version=\"1.0\"?>\n" +
+                "<company>\n" +
+                "  <employee>\n" +
+                "    <name>John Doe</name>\n" +
+                "    <department>HR</department>\n" +
+                "  </employee>\n" +
+                "</company>";
 
         JSONObject jobj = XML.toJSONObject(new StringReader(xmlString), addPrefix::apply);
 
-        FileWriter file = null;
-        try {
-            file = new FileWriter("output.json");
+        // Write the JSONObject to a file
+        try (FileWriter file = new FileWriter("reversedKeysOutput.json")) {
+            file.write(jobj.toString(4));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
-        file.write(jobj.toString(4));
-        file.close();
-
     }
 }
