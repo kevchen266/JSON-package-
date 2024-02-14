@@ -752,7 +752,19 @@ public class XML {
         }
         return jo;
     }
-
+    /**
+     * MileStone3
+     * Parses XML content into a JSONObject, applying a transformation to each key.
+     *
+     * @param x The XMLTokener object used to read and tokenize the XML content.
+     * @param context The JSONObject that accumulates the parsed XML data.
+     * @param name The name of the current element being parsed (used for nested elements).
+     * @param config Configuration settings for XML parsing, such as handling of special tags.
+     * @param func A functional parameter that defines how XML tag names are transformed before being used as keys in the resulting JSONObject.
+     *             This allows for dynamic key transformation during parsing, enabling custom modifications like prefixing, suffixing, or other alterations
+     *             as defined by the provided function. The transformation is applied directly to tag names, attributes, and ensures consistency throughout
+     *             the JSON object structure.
+     */
     private static boolean parse(XMLTokener x, JSONObject context, String name, XMLParserConfiguration config, Function<String,String> func)
             throws JSONException {
         char c;
