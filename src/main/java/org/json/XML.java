@@ -741,9 +741,12 @@ public class XML {
     public static JSONObject toJSONObject(Reader reader, Function<String,String> keyTransformer) throws JSONException {
         JSONObject jo = new JSONObject();
         XMLTokener content = new XMLTokener(reader);
+        // Loop through the XML content
         while (content.more()) {
+            // Skip to the next '<' character to find XML tags
             content.skipPast("<");
             if(content.more()) {
+                // Process the found tag and its content, including applying the key transformation
                 parse(content, jo, "", XMLParserConfiguration.ORIGINAL,  keyTransformer);
             }
         }
