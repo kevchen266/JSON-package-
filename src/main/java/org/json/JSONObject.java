@@ -3,7 +3,15 @@ package org.json;
 /*
 Public Domain.
 */
-
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Objects;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -2883,6 +2891,52 @@ public class JSONObject {
             "JavaBean object contains recursively defined member variable of key " + quote(key)
         );
     }
+    /**
+     * Milestone4
+     * Enhances JSONObject with the capability to be streamed, enabling
+     * chained operations on its nodes. This method initializes a stream
+     * over the JSONObject, leveraging a custom Spliterator to traverse
+     * and split the JSON structure iteratively using a stack.
+     *
+     * @return A Stream of JSONObject for chained operations.
+     */
+    public Stream<JSONObject> toStream() {
+        Spliterator<JSONObject> spliterator = new EnhancedJSONObjectSpliterator(this);
+        return StreamSupport.stream(spliterator, false);
+    }
 
+    private static class EnhancedJSONObjectSpliterator extends Spliterators.AbstractSpliterator<JSONObject> {
+        private final Deque<Object> traversalStack = new ArrayDeque<>();
+
+        /**
+         * Initializes the spliterator for a given JSONObject, preparing
+         * it for traversal by pushing it onto the stack.
+         *
+         * @param jsonObject The root JSONObject to start traversing from.
+         */
+        protected EnhancedJSONObjectSpliterator(JSONObject jsonObject) {
+            super(Long.MAX_VALUE, Spliterator.ORDERED | Spliterator.IMMUTABLE);
+            traversalStack.push(Objects.requireNonNull(jsonObject, "Initial JSONObject cannot be null"));
+        }
+
+        @Override
+        public boolean tryAdvance(java.util.function.Consumer<? super JSONObject> action) {
+            while (!traversalStack.isEmpty()) {
+                Object current = traversalStack.pop();
+                if (current instanceof JSONArray) {
+                    JSONArray currentArray = (JSONArray) current;
+                    for (int i = currentArray.length() - 1; i >= 0; i--) {
+                        traversalStack.push(currentArray.get(i));
+                    }
+                } else if (current instanceof JSONObject) {
+                    JSONObject currentObject = (JSONObject) current;
+                    action.accept(currentObject);
+                    currentObject.keySet().forEach(key -> traversalStack.push(currentObject.get(key)));
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
 
 }
