@@ -3,10 +3,19 @@ package org.json;
 /*
 Public Domain.
 */
+
+import java.util.ArrayDeque;
+import java.util.Deque;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Objects;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 import java.util.Objects;
 import java.util.Spliterator;
 import java.util.Spliterators;
