@@ -19,6 +19,7 @@ public class M2Test {
 
         // Attempt to parse XML based on JSONPointer path and print the result
         try {
+
             JSONObject jobj = XML.toJSONObject(new StringReader(xmlString));
             JSONObject result = (JSONObject) new JSONPointer("/contact/address").queryFrom(jobj);
             System.out.println("Result parsed by path:\n" + result.toString(2));
